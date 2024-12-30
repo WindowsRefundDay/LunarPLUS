@@ -9,14 +9,22 @@ def on_release(key):
         if key == keyboard.Key.f1:
             Aimbot.update_status_aimbot()
         if key == keyboard.Key.f2:
-            Aimbot.clean_up()
+            lunar.clean_up()
+            return False  # Stop listener
     except NameError:
         pass
 
 def main():
     global lunar
     lunar = Aimbot(collect_data = "collect_data" in sys.argv)
-    lunar.start()
+    
+    # Start keyboard listener
+    with keyboard.Listener(on_release=on_release) as listener:
+        try:
+            lunar.start()
+        except Exception as e:
+            print(f"Error: {e}")
+            lunar.clean_up()
 
 def setup():
     path = "lib/config"
@@ -50,16 +58,14 @@ if __name__ == "__main__":
 
     print(colored('''
 
-  _    _   _ _   _    _    ____     _     ___ _____ _____ 
- | |  | | | | \ | |  / \  |  _ \   | |   |_ _|_   _| ____|
- | |  | | | |  \| | / _ \ | |_) |  | |    | |  | | |  _|  
- | |__| |_| | |\  |/ ___ \|  _ <   | |___ | |  | | | |___ 
- |_____\___/|_| \_/_/   \_\_| \_\  |_____|___| |_| |_____|
+  _    _   _ _   _    _    ____     ____  _     _   _ ____  
+ | |  | | | | \ | |  / \  |  _ \   |  _ \| |   | | | / ___| 
+ | |  | | | |  \| | / _ \ | |_) |  | |_) | |   | | | \___ \ 
+ | |__| |_| | |\  |/ ___ \|  _ <   |  __/| |___| |_| |___) |
+ |_____\___/|_| \_/_/   \_\_| \_\  |_|   |_____|_____|____/ 
                                                                          
-(Neural Network Aimbot)''', "green"))
+(LUNAR PLUS)''', "green"))
     
-    print(colored('To get full version of Lunar V2, visit https://gannonr.com/lunarv2 OR join the discord: discord.gg/ai-aimbot', "red"))
-
     path_exists = os.path.exists("lib/config/config.json")
     if not path_exists or ("setup" in sys.argv):
         if not path_exists:
@@ -69,6 +75,4 @@ if __name__ == "__main__":
     if "collect_data" in sys.argv and not path_exists:
         os.makedirs("lib/data")
     from lib.aimbot import Aimbot
-    listener = keyboard.Listener(on_release=on_release)
-    listener.start()
     main()
